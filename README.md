@@ -1,4 +1,4 @@
-# royal_game_of_ur
+# Royal Game of Ur
 
 [Royal Game of Ur](https://en.wikipedia.org/wiki/Royal_Game_of_Ur) is a two-player board game that originated in ancient Mesopotamia.
 
