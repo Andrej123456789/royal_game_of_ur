@@ -1,0 +1,8 @@
+{
+    "players": 2,
+
+    "network": [{
+        "enabled": false,
+        "port": 5555
+    }]
+}
