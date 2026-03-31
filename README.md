@@ -1,6 +1,6 @@
 # Royal Game of Ur
 
-[Royal Game of Ur](https://en.wikipedia.org/wiki/Royal_Game_of_Ur) is a two-player board game that originated in ancient Mesopotamia.
+[Royal Game of Ur](https://en.wikipedia.org/wiki/Royal_Game_of_Ur) is a two-player board game that originated in ancient Mesopotamia, where players race pieces along a path using dice rolls to reach the end first.
 
 This implementation is multiplayer and runs in terminal. It is written in C programming language.
 
