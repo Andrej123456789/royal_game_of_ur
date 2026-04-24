@@ -8,7 +8,7 @@ This implementation is multiplayer and runs in terminal. It is written in C prog
 
 ## Compile
 
-### Installing dependencies
+## Installing dependencies
 
 ### Windows
 
@@ -26,7 +26,7 @@ This implementation is multiplayer and runs in terminal. It is written in C prog
 | gcc      | <table><tr><th>Debian</th><th>Arch Linux</th></tr><td>`apt-get install gcc`</td><td>`pacman -S gcc`</td></tr></table>              |
 | json-c   | <table><tr><th>Debian</th><th>Arch Linux</th></tr><td>`apt-get install libjson-c-dev`</td><td>`pacman -S json-c`</td></tr></table> |
 
-### Compiling & running
+## Compiling & running
 
 ### Windows
 
