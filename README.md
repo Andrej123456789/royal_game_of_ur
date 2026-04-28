@@ -34,7 +34,7 @@ This implementation is multiplayer and runs in terminal. It is written in C prog
 | ------- | ----------------------------------------------------------------- | --------------------------------------------------------------- |
 | 1       | Clone a repository                                                | `git clone https://github.com/Andrej123456789/royal_game_of_ur` |
 | 2       | Enter the `src` directory                                         | `cd royal_game_of_ur/src`                                       |
-| 3       | Create `build` directory                                          | `mkdir build`                                                   |
+| 3       | Create `build` directory and enter it                             | `mkdir build`                                                   |
 | 4       | Run CMake                                                         | `cmake .. -DVCPKG_ROOT="path_to_vcpkg`                          |
 | 5       | Enter `Developer Command Prompt` and enter the `client` directory | `cd path_to_client_directory`                                   |
 | 6       | Compile and run the client                                        | `cl client_windows.c && ./client_windows <ip> <port>`           |
