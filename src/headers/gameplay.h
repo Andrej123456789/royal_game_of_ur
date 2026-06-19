@@ -17,6 +17,7 @@ typedef struct Piece
 typedef struct Player
 {
     Piece pieces[7];
+    int points;
 } Player;
 
 typedef struct Gameplay

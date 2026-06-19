@@ -18,6 +18,11 @@ void gameplay(Gameplay* _gameplay)
 {
     draw_board(_gameplay);
 
+    srand(time(NULL));
+    _gameplay->current_player = rand() % 2;
+
+    printf("Player %d starts first. [0 - left, 1 - right]\n", _gameplay->current_player);
+
     while (true)
     {
         printf("Player %d [roll, moveX, help, exit]: ", _gameplay->current_player);
@@ -42,15 +47,36 @@ void gameplay(Gameplay* _gameplay)
 
         else if (strncmp(user_input, "move", 4) == 0)
         {
-            printf("\x1b[H\x1b[J"); // move cursor to the beginning and clear from cursor down
+            int id = (int)(user_input[4] - '0');
+            if (id >= 0 && id <= 7)
+            {
+                if (_gameplay->dice_rolled == false)
+                {
+                    printf("First roll a dice!\n");
+                    continue;
+                }
+
+                Piece* p = &_gameplay->players[_gameplay->current_player].pieces[id];
+            }
+
+            else
+            {
+                printf("Invalid piece ID '%c'!\n", user_input[4]);
+                continue;
+            }
+
+            printf("\x1b[2J\x1b[H");
             draw_board(_gameplay);
+
+            _gameplay->current_player = !_gameplay->current_player;
+            _gameplay->dice_rolled = false;
         }
 
         else if (strcmp(user_input, "help") == 0)
         {
             printf("--- HELP ---\n");
             printf("roll - roll the dice, only possible to roll once per turn\n");
-            printf("moveX - move a piece with index 'X', use letter n to bring a new piece to the board\n");
+            printf("moveX - move a piece with index 'X'\n");
             printf("help - help with the commands\n");
             printf("exit - stop the game\n");
             printf("GitHub: https://github.com/Andrej123456789/royal_game_of_ur\n");

@@ -45,6 +45,8 @@ int main()
         {
             _gameplay->players[i].pieces[j].position = -1;
         }
+
+        _gameplay->players[i].points = 0;
     }
 
     gameplay(_gameplay);

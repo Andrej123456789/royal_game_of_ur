@@ -19,6 +19,15 @@ static char square[HEIGHT][WIDTH] =
     " ---  ---  ---  "
 };
 
+static char square_rosette[HEIGHT][WIDTH] =
+{
+    " ---  ---  ---  ",
+    "|             | ",
+    "|      R      | ",
+    "|             | ",
+    " ---  ---  ---  "
+};
+
 static char square_piece[HEIGHT][WIDTH_PIECE] =
 {
     " ---  ---  ---  ",
@@ -95,7 +104,15 @@ void draw_board(Gameplay* _gameplay)
 
                 else
                 {
-                    printf("%s", square[j]);
+                    if ((i == 0 && (k == 0 || k == 2)) || (i == 3 && k == 1) || (i == 6 && (k == 0 || k == 2)))
+                    {
+                        printf("%s", square_rosette[j]);
+                    }
+
+                    else
+                    {
+                        printf("%s", square[j]);
+                    }
                 }
 
                 printf("   ");
