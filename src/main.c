@@ -8,23 +8,37 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "headers/board.h"
 #include "headers/gameplay.h"
+
+#ifdef _WIN32
+#include <windows.h>
+    void enableANSI()
+    {
+        HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+        if (hOut == INVALID_HANDLE_VALUE) return;
+
+        DWORD mode;
+        if (!GetConsoleMode(hOut, &mode)) return;
+
+        SetConsoleMode(hOut, mode | ENABLE_VIRTUAL_TERMINAL_PROCESSING);
+    }
+#else
+    void enableANSI() {}
+#endif
 
 /**
  * Entry point
  */
 int main()
 {
+    enableANSI();
     printf("Royal Game of Ur\n");
-
-    draw_board();
-
+    
     Gameplay* _gameplay = (Gameplay*)malloc(sizeof(Gameplay));
     _gameplay->current_player = false;
     _gameplay->dice = -1;
     _gameplay->dice_rolled = false;
-
+    
     for (int i = 0; i < 2; i++)
     {
         for (int j = 0; j < 7; j++)
@@ -34,6 +48,7 @@ int main()
     }
 
     gameplay(_gameplay);
+    free(_gameplay);
 
     return 0;
 }

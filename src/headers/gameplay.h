@@ -9,17 +9,17 @@
 
 #include <stdbool.h>
 
-typedef struct piece_T
+typedef struct Piece
 {
     int position;
 } Piece;
 
-typedef struct player_T
+typedef struct Player
 {
     Piece pieces[7];
 } Player;
 
-typedef struct gameplay_T
+typedef struct Gameplay
 {
     bool current_player;
     int dice;

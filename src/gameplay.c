@@ -11,10 +11,13 @@
 #include <string.h>
 #include <time.h>
 
+#include "headers/board.h"
 #include "headers/gameplay.h"
 
 void gameplay(Gameplay* _gameplay)
 {
+    draw_board(_gameplay);
+
     while (true)
     {
         printf("Player %d [roll, moveX, help, exit]: ", _gameplay->current_player);
@@ -26,7 +29,7 @@ void gameplay(Gameplay* _gameplay)
         {
             if (_gameplay->dice_rolled == true)
             {
-                printf("Dice already rolled!\n");
+                printf("Dice already rolled! Dice is: %d.\n", _gameplay->dice);
                 continue;
             }
 
@@ -39,7 +42,8 @@ void gameplay(Gameplay* _gameplay)
 
         else if (strncmp(user_input, "move", 4) == 0)
         {
-
+            printf("\x1b[H\x1b[J"); // move cursor to the beginning and clear from cursor down
+            draw_board(_gameplay);
         }
 
         else if (strcmp(user_input, "help") == 0)
@@ -54,7 +58,8 @@ void gameplay(Gameplay* _gameplay)
 
         else if (strcmp(user_input, "exit") == 0)
         {
-            
+            printf("Exiting...");
+            break;
         }
 
         else
