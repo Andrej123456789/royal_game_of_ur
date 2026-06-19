@@ -4,7 +4,7 @@
 
 Players race pieces along a path using dice rolls to reach the end first.
 
-This implementation is multiplayer and runs in terminal. It is written in C programming language.
+This is a multiplayer terminal-based implementation using Irving Finkel's rules. It is written in C programming language.
 
 ## Compile
 
@@ -39,7 +39,7 @@ This implementation is multiplayer and runs in terminal. It is written in C prog
 | 5       | Enter `Developer Command Prompt` and enter the `client` directory | `cd path_to_client_directory`                                   |
 | 6       | Compile and run the client                                        | `cl client_windows.c && ./client_windows <ip> <port>`           |
 
-**Notice! In order not to use Visual Studio (you still need to have it installed), you can use nmake. Run Cmake with following command: `cmake -G "NMake Makefiles" -DCMAKE_C_COMPILER=compiler-cl -DCMAKE_CXX_COMPILER=compiler-cl -DVCPKG_ROOT="path_to_vcpkg" ..`. To compile the project use command `nmake`.**
+**Notice! In order not to use Visual Studio (you still need to have it installed), you can use nmake. Run CMake with following command: `cmake -G "NMake Makefiles" -DCMAKE_C_COMPILER=compiler-cl -DCMAKE_CXX_COMPILER=compiler-cl -DVCPKG_ROOT="path_to_vcpkg" ..`. To compile the project use command `nmake`.**
 
 ### Linux
 
