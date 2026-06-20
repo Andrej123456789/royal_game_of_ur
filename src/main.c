@@ -11,7 +11,7 @@
 #include "headers/gameplay.h"
 
 #ifdef _WIN32
-#include <windows.h>
+    #include <windows.h>
     void enableANSI()
     {
         HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -32,7 +32,7 @@
 int main()
 {
     enableANSI();
-    printf("Royal Game of Ur\n");
+    printf("Royal Game of Ur | Irving Finkel's ruleset\n");
     
     Gameplay* _gameplay = (Gameplay*)malloc(sizeof(Gameplay));
     _gameplay->current_player = false;
@@ -43,7 +43,7 @@ int main()
     {
         for (int j = 0; j < 7; j++)
         {
-            _gameplay->players[i].pieces[j].position = -1;
+            _gameplay->players[i].pieces[j].position = (i == 0) ? 12 : 14;
         }
 
         _gameplay->players[i].points = 0;
