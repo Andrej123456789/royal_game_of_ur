@@ -77,6 +77,12 @@ int next_value_zero(int pos, bool finkel);
 int next_value_one(int pos, bool finkel);
 
 /**
+ * 4-binary-dice emulation
+ * @return int
+ */
+int roll_dice();
+
+/**
  * Gameplay mechanics
  * @param _gameplay `Gameplay` struct
  */

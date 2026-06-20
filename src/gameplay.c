@@ -108,12 +108,31 @@ int next_value_one(int x, bool finkel)
     }
 }
 
+int roll_dice()
+{
+    int sum = 0;
+    for (int i = 0; i < 4; i++)
+    {
+        sum += rand() & 1;
+    }
+
+    return sum;
+}
+
 void gameplay(Gameplay* _gameplay)
 {
     draw_board(_gameplay);
 
     srand(time(NULL));
-    _gameplay->current_player = rand() % 2;
+    if (roll_dice() >= roll_dice())
+    {
+        _gameplay->current_player = 0;
+    }
+
+    else
+    {
+        _gameplay->current_player = 1;
+    }
 
     printf("Player %d starts first. [0 - left, 1 - right]\n", _gameplay->current_player);
 
@@ -132,8 +151,7 @@ void gameplay(Gameplay* _gameplay)
                 continue;
             }
 
-            srand(time(NULL));
-            _gameplay->dice = rand() % 5;
+            _gameplay->dice = roll_dice();
             _gameplay->dice_rolled = true;
 
             printf("Dice is set at: %d\n", _gameplay->dice);
