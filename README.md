@@ -4,7 +4,7 @@
 
 Players race pieces along a path using dice rolls to reach the end first.
 
-This is a multiplayer terminal-based implementation using Irving Finkel's rules. It is written in C programming language.
+This is a multiplayer terminal-based implementation using [Irving Finkel's rules](https://royalur.net/rules). It is written in C programming language.
 
 ## Compile
 

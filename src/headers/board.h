@@ -15,5 +15,6 @@ struct Gameplay;
 
 /**
  * Draws the game board
+ * @param _gameplay `Gameplay` struct
  */
 void draw_board(struct Gameplay* _gameplay);

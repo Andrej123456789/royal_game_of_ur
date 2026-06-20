@@ -12,6 +12,11 @@
 
 #ifdef _WIN32
     #include <windows.h>
+
+    /**
+     * Enable ANSI escape codes
+     * Required in classic console hosts
+     */
     void enableANSI()
     {
         HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -23,6 +28,10 @@
         SetConsoleMode(hOut, mode | ENABLE_VIRTUAL_TERMINAL_PROCESSING);
     }
 #else
+    /**
+     * Enable ANSI escape codes
+     * Not required on POSIX based systems
+     */
     void enableANSI() {}
 #endif
 
