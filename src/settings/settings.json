@@ -1,6 +1,9 @@
 {
+    "irvin_finkel_ruleset": true,   // if true game uses Irvin Finkel's ruleset,
+                                    // if false game uses James Masters's ruleset
+
     "network": [{
-        "enabled": false,
-        "port": 5555
+        "enabled": false, // multiplayer enabled or not
+        "port": 5555 // server's port
     }]
 }

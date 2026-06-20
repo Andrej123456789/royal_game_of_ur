@@ -4,11 +4,14 @@
 
 Players race pieces along a path using dice rolls to reach the end first.
 
-This is a multiplayer terminal-based implementation using Irving Finkel's rules. It is written in C programming language.
+This is a multiplayer terminal-based implementation written in C programming language.
 
 ## Rules
+
+### Irving Finkel ruleset
+
 - 2 players, 7 pieces each
-- 20-square shared board with branching path
+- 24-square shared board with branching path
 - 4 tetrahedral dice (0–4 per roll)
 - pieces enter from start and follow fixed route to exit
 - movement can be split across multiple pieces or stacked on one
@@ -16,6 +19,16 @@ This is a multiplayer terminal-based implementation using Irving Finkel's rules.
 - rosette squares are safe (cannot be captured) and grant an extra roll
 - must roll exact number to bear off pieces
 - pieces must fully traverse and exit to score
+- first to bear off all 7 pieces wins
+
+### James Masters ruleset
+
+- 2 players, 7 pieces each
+- 24-square shared board with branching path
+- 3 tetrahedral dice (0–4 per roll), rolling a total of 0 allows a special move of exactly 4 squares
+- rosette squares are evenly spaced (every 4th square) and not safe (can be captured), but still grant an extra roll
+- landing on an opponent's piece anywhere (including rosettes) sends it back to the start
+- pieces must fully traverse the board and exit via an exact roll
 - first to bear off all 7 pieces wins
 
 ## Compile

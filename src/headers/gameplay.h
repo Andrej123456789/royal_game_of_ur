@@ -8,6 +8,18 @@
 #pragma once
 
 #include <stdbool.h>
+#include <stdint.h>
+
+/**
+ * Struct containing network informations
+ * @param enabled is multiplayer enabled
+ * @param port server's port number
+ */
+typedef struct Network
+{
+    bool enabled;
+    uint16_t port;
+} Network;
 
 /**
  * Struct containing piece informations
@@ -36,6 +48,8 @@ typedef struct Player
  * @param dice current dice number
  * @param dice_rolled has dice been rolled
  * @param players array containing all of the players
+ * @param irvin_finkel_ruleset is game played by Irvin Finkel's rules or
+ * by James Masters's rules
  */
 typedef struct Gameplay
 {
@@ -43,17 +57,24 @@ typedef struct Gameplay
     int dice;
     bool dice_rolled;
     Player players[2];
+    bool irvin_finkel_ruleset;
 } Gameplay;
 
 /**
  * Move piece of player 0
+ * @param pos current position
+ * @param finkel if true Finkel's rules are used, if false Masters's rules are used
+ * @return int
  */
-int next_value_zero(int x);
+int next_value_zero(int pos, bool finkel);
 
 /**
  * Move piece of player 1
+ * @param pos current position
+ * @param finkel if true Finkel's rules are used, if false Masters's rules are used
+ * @return int
  */
-int next_value_one(int x);
+int next_value_one(int pos, bool finkel);
 
 /**
  * Gameplay mechanics
