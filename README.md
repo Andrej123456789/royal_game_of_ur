@@ -4,7 +4,19 @@
 
 Players race pieces along a path using dice rolls to reach the end first.
 
-This is a multiplayer terminal-based implementation using [Irving Finkel's rules](https://royalur.net/rules). It is written in C programming language.
+This is a multiplayer terminal-based implementation using Irving Finkel's rules. It is written in C programming language.
+
+## Rules
+- 2 players, 7 pieces each
+- 20-square shared board with branching path
+- 4 tetrahedral dice (0–4 per roll)
+- pieces enter from start and follow fixed route to exit
+- movement can be split across multiple pieces or stacked on one
+- landing on opponent piece on normal square sends it back to start
+- rosette squares are safe (cannot be captured) and grant an extra roll
+- must roll exact number to bear off pieces
+- pieces must fully traverse and exit to score
+- first to bear off all 7 pieces wins
 
 ## Compile
 

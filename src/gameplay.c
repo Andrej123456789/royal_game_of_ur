@@ -194,6 +194,12 @@ void gameplay(Gameplay* _gameplay)
                 }
             }
 
+            // Rosette tiles gives an extra roll dice. Double negation will not give turn to the next player
+            if (new_pos == 0 || new_pos == 2 || new_pos == 10 || new_pos == 18 || new_pos == 20)
+            {
+                _gameplay->current_player = !_gameplay->current_player;
+            }
+
             _gameplay->current_player = !_gameplay->current_player;
             _gameplay->dice_rolled = false;
         }
