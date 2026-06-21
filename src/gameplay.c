@@ -216,7 +216,7 @@ void gameplay(Gameplay* _gameplay)
 
             for (int i = 0; i < 7; i++)
             {
-                if (i != id && _gameplay->players[_gameplay->current_player].pieces[i].position == new_pos)
+                if (i != id && new_pos != 15 && new_pos != 17 && _gameplay->players[_gameplay->current_player].pieces[i].position == new_pos)
                 {
                     invalid = true;
                     break;
@@ -253,19 +253,18 @@ void gameplay(Gameplay* _gameplay)
             }
 
             p->position = new_pos;
+            if ((_gameplay->current_player == 0 && new_pos == 15) || (_gameplay->current_player == 1 && new_pos == 17))
+            {
+                _gameplay->players[_gameplay->current_player].points++;
+            }
 
             printf("\x1b[2J\x1b[H");
             draw_board(_gameplay);
 
-            if ((_gameplay->current_player == 0 && new_pos == 15) || (_gameplay->current_player == 1 && new_pos == 17))
+            if (_gameplay->players[_gameplay->current_player].points == 7)
             {
-                _gameplay->players[_gameplay->current_player].points++;
-
-                if (_gameplay->players[_gameplay->current_player].points == 7)
-                {
-                    printf("Player %d won!\n", _gameplay->current_player);
-                    break;
-                }
+                printf("Player %d won!\n", _gameplay->current_player);
+                break;
             }
 
             // Rosette tiles gives an extra roll dice. Double negation will not give turn to the next player

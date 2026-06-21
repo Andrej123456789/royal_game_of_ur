@@ -48,8 +48,25 @@ static char empty_square[HEIGHT][WIDTH] =
 
 void draw_board(Gameplay* _gameplay)
 {
-    printf("Player 0: %d - left, %d - completed\n", 7 - _gameplay->players[0].points, _gameplay->players[0].points);
-    printf("Player 1: %d - left, %d - completed\n", 7 - _gameplay->players[1].points, _gameplay->players[1].points);
+    printf("Player 0: %d - left. Completed: ", 7 - _gameplay->players[0].points);
+    for (int i = 0; i < 7; i++)
+    {
+        if (_gameplay->players[0].pieces[i].position == 15)
+        {
+            printf("%d, ", i);
+        }
+    }
+    printf("\n");
+
+    printf("Player 1: %d - left. Completed: ", 7 - _gameplay->players[1].points);
+    for (int i = 0; i < 7; i++)
+    {
+        if (_gameplay->players[1].pieces[i].position == 17)
+        {
+            printf("%d, ", i);
+        }
+    }
+    printf("\n");
 
     for (int i = 0; i < 8; i++)
     {
