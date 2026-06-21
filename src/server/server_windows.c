@@ -82,7 +82,7 @@ void net_accept_clients(int listener_fd, Player* players, int number_of_players)
         int i;
         for (i = 0; i < number_of_players; ++i)
         {
-            if (players[i].network.sockfd <= 0) break;
+            if (players[i].type == 2 && players[i].network.sockfd <= 0) break;
         }
 
         if (i == number_of_players)
@@ -108,6 +108,8 @@ void net_poll_clients(Player* players, int number_of_players)
 
     for (int i = 0; i < number_of_players; ++i)
     {
+        if (players[i].type != 2) continue;
+
         SOCKET s = (SOCKET)players[i].network.sockfd;
         if (s != INVALID_SOCKET && s > 0) { FD_SET(s, &rfds); if (s > maxfd) maxfd = s; }
     }
@@ -120,6 +122,8 @@ void net_poll_clients(Player* players, int number_of_players)
     char ch;
     for (int i = 0; i < number_of_players; ++i)
     {
+        if (players[i].type != 2) continue;
+
         SOCKET s = (SOCKET)players[i].network.sockfd;
         if (s <= 0 || !FD_ISSET(s, &rfds)) continue;
 
@@ -156,6 +160,8 @@ void broadcast(Player* players, int number_of_players, const char* fmt, ...)
 
     for (int i = 0; i < number_of_players; ++i)
     {
+        if (players[i].type != 2) continue;
+
         SOCKET s = (SOCKET)players[i].network.sockfd;
         if (s <= 0) continue;
 

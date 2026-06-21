@@ -73,6 +73,44 @@ int start(Gameplay* _gameplay, Network* _network, char* path)
             _gameplay->irvin_finkel_ruleset = json_object_get_boolean(val);
         }
 
+        else if (strcmp(key, "players") == 0)
+        {
+            struct json_object* players;
+
+            struct json_object_iterator it2;
+            struct json_object_iterator itEnd2;
+
+            for (size_t i = 0; i < json_object_array_length(val); i++)
+            {
+                struct json_object* element = json_object_array_get_idx(val, i);
+                players = json_tokener_parse(json_object_get_string(element));
+            }
+
+            it2 = json_object_iter_init_default();
+            it2 = json_object_iter_begin(players);
+            itEnd2 = json_object_iter_end(players);
+
+            while (!json_object_iter_equal(&it2, &itEnd2))
+            {
+                const char* key2 = json_object_iter_peek_name(&it2);
+                json_object* val2 = json_object_iter_peek_value(&it2);
+
+                if (strcmp(key2, "player0") == 0)
+                {
+                    _gameplay->players[0].type = json_object_get_int(val2);
+                }
+
+                else if (strcmp(key2, "player1") == 0)
+                {
+                    _gameplay->players[1].type = json_object_get_int(val2);
+                }
+
+                json_object_iter_next(&it2);
+            }
+
+            json_object_put(players);
+        }
+
         else if (strcmp(key, "network") == 0)
         {
             struct json_object* network;
@@ -139,6 +177,7 @@ int main(int argc, char* argv[])
         }
 
         _gameplay->players[i].points = 0;
+        _gameplay->players[i].type = 0;
 
         _gameplay->players[i].network.sockfd = -1;
         memset(_gameplay->players[i].network.inbuf, 0, BUFFER_LIMIT);
@@ -148,6 +187,7 @@ int main(int argc, char* argv[])
     Network* _network = (Network*)malloc(sizeof(Network));
     _network->enabled = false;
     _network->port = 5555;
+    _network->number_of_players = 0;
 
     if (argc < 2)
     {
@@ -163,7 +203,27 @@ int main(int argc, char* argv[])
             printf("Continuing with default settings.\n");
         }
     }
-    
+
+    if ((_gameplay->players[0].type == 2 || _gameplay->players[1].type == 2) && _network->enabled == false)
+    {
+        printf("Network is not enabled! ");
+        printf("Network players are disabled.\n");
+    }
+
+    if (_network->enabled == true)
+    {
+        if (_gameplay->players[0].type == 2) { _network->number_of_players++; }
+        if (_gameplay->players[1].type == 2) { _network->number_of_players++; }
+
+        if (_gameplay->players[0].type != 2 && _gameplay->players[1].type != 2)
+        {
+            printf("No network players found! ");
+            printf("Network players are disabled.\n");
+
+            _network->enabled = false;
+        }
+    }
+
     gameplay(_gameplay, _network);
 
     free(_gameplay);

@@ -17,7 +17,7 @@ struct Player;
 /**
  * Starts a server
  * @param port port number
- * @param number_of_players number of players on a server
+ * @param number_of_players total number of players in the game
  * @return int
  */
 int net_start_server(uint16_t port, uint16_t number_of_players);
@@ -26,7 +26,7 @@ int net_start_server(uint16_t port, uint16_t number_of_players);
  * Accepts a client's connection to the server
  * @param listener_fd file descriptor
  * @param players array of `Player` structs
- * @param number_of_players number of players on a server
+ * @param number_of_players total number of players in the game
  * @return void
  */
 void net_accept_clients(int listener_fd, Player* players, int number_of_players);
@@ -34,7 +34,7 @@ void net_accept_clients(int listener_fd, Player* players, int number_of_players)
 /**
  * Polls input from clients
  * @param players array of `Player` structs
- * @param number_of_players number of players on a server
+ * @param number_of_players total number of players in the game
  * @return void
  */
 void net_poll_clients(Player* players, int number_of_players);
@@ -50,7 +50,7 @@ void send_to_player(Player* p, const char* fmt, ...);
 /**
  * Sends a message to all players
  * @param players array of `Player` structs
- * @param number_of_players number of players on a server
+ * @param number_of_players total number of players in the game
  * @param fmt message
  * @param void
  */

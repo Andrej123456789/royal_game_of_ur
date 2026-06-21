@@ -17,11 +17,13 @@
  * Struct containing network informations
  * @param enabled is multiplayer enabled
  * @param port server's port number
+ * @param number_of_players number of network players
  */
 typedef struct Network
 {
     bool enabled;
     uint16_t port;
+    int number_of_players;
 } Network;
 
 /**
@@ -38,11 +40,13 @@ typedef struct Piece
  * Struct containing player's informations
  * @param pieces array containing all of the player's pieces
  * @param points how many pieces have completed their turn
+ * @param type type of player: 0 - local player, 1 - computer player, 2 - network player
  */
 typedef struct Player
 {
     Piece pieces[7];
     int points;
+    int type;
 
     /**
      * Struct related to the network profile of a player.
@@ -97,6 +101,21 @@ int next_value_one(int pos, bool finkel);
  * @return int
  */
 int roll_dice();
+
+/**
+ * Check if moving selected piece is possible
+ * @param _gameplay `Gameplay` struct
+ * @param id id of current piece
+ * @param p `Piece` struct
+ */
+int make_move(Gameplay* _gameplay, int id, Piece* p);
+
+/**
+ * Computer's play
+ * @param _gameplay `Gameplay` struct
+ * @param user_input array where computer will save its selection
+ */
+void computer_player(Gameplay* _gameplay, char* user_input);
 
 /**
  * Gameplay mechanics

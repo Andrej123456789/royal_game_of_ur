@@ -126,6 +126,89 @@ int roll_dice()
     return sum;
 }
 
+int make_move(Gameplay* _gameplay, int id, Piece* p)
+{
+    if (p->position == 15 || p->position == 17)
+    {
+        return -1;
+    }
+
+    int old_pos = p->position;
+    int new_pos = -1;
+
+    for (int i = 0; i < _gameplay->dice; i++)
+    {
+        if (_gameplay->current_player == false)
+        {
+            new_pos = next_value_zero(p->position, _gameplay->irvin_finkel_ruleset);
+        }
+
+        else
+        {
+            new_pos = next_value_one(p->position, _gameplay->irvin_finkel_ruleset);
+        }
+
+        p->position = new_pos;
+    }
+
+    // Perform checks to ensure move is valid
+
+    for (int i = 0; i < 7; i++)
+    {
+        if (i != id && new_pos != 15 && new_pos != 17 && _gameplay->players[_gameplay->current_player].pieces[i].position == new_pos)
+        {
+            new_pos = -1;
+            break;
+        }
+    }
+
+    for (int i = 0; i < 7; i++)
+    {
+        if (_gameplay->players[!_gameplay->current_player].pieces[i].position == new_pos)
+        {
+            // You cannot capture on rosette squares
+            if (new_pos == 10 && _gameplay->irvin_finkel_ruleset == true)
+            {
+                new_pos = -1;
+                break;
+            }
+
+            _gameplay->players[!_gameplay->current_player].pieces[i].position = (!_gameplay->current_player == 0) ? 12 : 14;
+            break;
+        }
+    }
+
+    if ((_gameplay->current_player == 0 && new_pos < 15 && old_pos > 15) || (_gameplay->current_player == 1 && new_pos < 17 && old_pos > 17))
+    {
+        new_pos = -1; // you need exact number of steps in order to finish
+    }
+
+    p->position = old_pos;
+    return new_pos;
+}
+
+void computer_player(Gameplay* _gameplay, char* user_input)
+{
+    if (_gameplay->dice_rolled == false)
+    {
+        strcpy(user_input, "roll");
+        return;
+    }
+
+    for (int i = 0; i < 7; i++)
+    {
+        int new_pos = make_move(_gameplay, i, &_gameplay->players[_gameplay->current_player].pieces[i]);
+        if (new_pos != -1)
+        {
+            snprintf(user_input, sizeof(user_input), "move%d", i);
+            return;
+        }
+    }
+
+    strcpy(user_input, "skip");
+    return;
+}
+
 void gameplay(Gameplay* _gameplay, Network* _network)
 {
     int listener_fd = -1;
@@ -138,7 +221,7 @@ void gameplay(Gameplay* _gameplay, Network* _network)
     if (_network->enabled == true)
     {
         uint16_t connected_clients = 0;
-        while (connected_clients < 2)
+        while (connected_clients < _network->number_of_players)
         {
             connected_clients = 0; // reset counter so it counts all connected clients correctly
             if (listener_fd >= 0)
@@ -209,47 +292,57 @@ void gameplay(Gameplay* _gameplay, Network* _network)
         }
 
         char user_input[6];
-        if (_network->enabled == true)
+        switch (_gameplay->players[_gameplay->current_player].type)
         {
-            send_to_player(&_gameplay->players[_gameplay->current_player], "Player %d [roll, moveX, help, skip, exit]: ", _gameplay->current_player);
+            case 1: // computer player
+                computer_player(_gameplay, user_input);
+                break;
 
-            const int TIME_LIMIT_SEC = 60;
-            const int POLL_SLEEP_US = 10000; // 10 ms
+            case 2: // network player
+                if (_network->enabled == true)
+                {
+                    send_to_player(&_gameplay->players[_gameplay->current_player], "Player %d [roll, moveX, help, skip, exit]: ", _gameplay->current_player);
+    
+                    const int TIME_LIMIT_SEC = 60;
+                    const int POLL_SLEEP_US = 10000; // 10 ms
+    
+                    time_t deadline = time(NULL) + TIME_LIMIT_SEC;
+    
+                    /* poll until we get a full line or the timer expires */
+                    while (!_gameplay->players[_gameplay->current_player].network.ready && time(NULL) < deadline)
+                    {
+                        net_poll_clients(_gameplay->players, 2);   /* non‑blocking socket pump  */
+    
+                        #if defined _WIN32 || defined _WIN64
+                            Sleep(POLL_SLEEP_US / 100);    /* nap to save CPU */
+                        #else
+                            usleep(POLL_SLEEP_US);         /* nap to save CPU */
+                        #endif
+                    }
+    
+                    if (_gameplay->players[_gameplay->current_player].network.ready)
+                    {
+                        strncpy(user_input, _gameplay->players[_gameplay->current_player].network.inbuf, 5);
+                        user_input[5] = '\0';
+                    }
+    
+                    else
+                    {
+                        strcpy(user_input, "time");
+                    }
+    
+                    /* reset buffer */
+                    _gameplay->players[_gameplay->current_player].network.inbuf[0] = '\0';
+                    _gameplay->players[_gameplay->current_player].network.ready = false;
+                }
 
-            time_t deadline = time(NULL) + TIME_LIMIT_SEC;
+                break;
+            
+            default:
+                printf("Player %d [roll, moveX, help, skip, exit]: ", _gameplay->current_player);
+                scanf("%5s", user_input);
 
-            /* poll until we get a full line or the timer expires */
-            while (!_gameplay->players[_gameplay->current_player].network.ready && time(NULL) < deadline)
-            {
-                net_poll_clients(_gameplay->players, 2);   /* non‑blocking socket pump  */
-
-                #if defined _WIN32 || defined _WIN64
-                    Sleep(POLL_SLEEP_US / 100);    /* nap to save CPU */
-                #else
-                    usleep(POLL_SLEEP_US);         /* nap to save CPU */
-                #endif
-            }
-
-            if (_gameplay->players[_gameplay->current_player].network.ready)
-            {
-                strncpy(user_input, _gameplay->players[_gameplay->current_player].network.inbuf, 5);
-                user_input[5] = '\0';
-            }
-
-            else
-            {
-                strcpy(user_input, "time");
-            }
-
-            /* reset buffer */
-            _gameplay->players[_gameplay->current_player].network.inbuf[0] = '\0';
-            _gameplay->players[_gameplay->current_player].network.ready = false;
-        }
-
-        else
-        {
-            printf("Player %d [roll, moveX, help, skip, exit]: ", _gameplay->current_player);
-            scanf("%5s", user_input);
+                break;
         }
 
         if (strcmp(user_input, "roll") == 0)
@@ -325,7 +418,9 @@ void gameplay(Gameplay* _gameplay, Network* _network)
             }
 
             Piece* p = &_gameplay->players[_gameplay->current_player].pieces[id];
-            if (p->position == 15 || p->position == 17)
+            int new_pos = make_move(_gameplay, id, p);
+
+            if (new_pos == -1)
             {
                 printf("Invalid move!\n");
                 if (_network->enabled == true)
@@ -333,69 +428,6 @@ void gameplay(Gameplay* _gameplay, Network* _network)
                     send_to_player(&_gameplay->players[_gameplay->current_player], "Invalid move!\n");
                 }
 
-                continue;
-            }
-
-            int old_pos = p->position;
-            int new_pos = -1;
-
-            for (int i = 0; i < _gameplay->dice; i++)
-            {
-                if (_gameplay->current_player == false)
-                {
-                    new_pos = next_value_zero(p->position, _gameplay->irvin_finkel_ruleset);
-                }
-
-                else
-                {
-                    new_pos = next_value_one(p->position, _gameplay->irvin_finkel_ruleset);
-                }
-
-                p->position = new_pos;
-            }
-
-            // Perform checks to ensure move is valid
-            bool invalid = false;
-
-            for (int i = 0; i < 7; i++)
-            {
-                if (i != id && new_pos != 15 && new_pos != 17 && _gameplay->players[_gameplay->current_player].pieces[i].position == new_pos)
-                {
-                    invalid = true;
-                    break;
-                }
-            }
-
-            for (int i = 0; i < 7; i++)
-            {
-                if (_gameplay->players[!_gameplay->current_player].pieces[i].position == new_pos)
-                {
-                    // You cannot capture on rosette squares
-                    if (new_pos == 10 && _gameplay->irvin_finkel_ruleset == true)
-                    {
-                        invalid = true;
-                        break;
-                    }
-
-                    _gameplay->players[!_gameplay->current_player].pieces[i].position = (!_gameplay->current_player == 0) ? 12 : 14;
-                    break;
-                }
-            }
-
-            if ((_gameplay->current_player == 0 && new_pos < 15 && old_pos > 15) || (_gameplay->current_player == 1 && new_pos < 17 && old_pos > 17))
-            {
-                invalid = true; // you need exact number of steps in order to finish
-            }
-
-            if (invalid == true)
-            {
-                printf("Invalid move!\n");
-                if (_network->enabled == true)
-                {
-                    send_to_player(&_gameplay->players[_gameplay->current_player], "Invalid move!\n");
-                }
-
-                p->position = old_pos;
                 continue;
             }
 
@@ -412,6 +444,15 @@ void gameplay(Gameplay* _gameplay, Network* _network)
             }
 
             draw_board(_gameplay, _network);
+
+            if (_gameplay->players[_gameplay->current_player].type != 0)
+            {
+                printf("Player %d moved piece %d to position %d.\n", _gameplay->current_player, id, new_pos);
+                if (_network->enabled == true)
+                {
+                    broadcast(_gameplay->players, 2, "Player %d moved piece %d to position %d.\n", _gameplay->current_player, id, new_pos);
+                }
+            }
 
             if (_gameplay->players[_gameplay->current_player].points == 7)
             {
@@ -458,6 +499,12 @@ void gameplay(Gameplay* _gameplay, Network* _network)
 
         else if (strcmp(user_input, "skip") == 0)
         {
+            printf("Skipping...\n");
+            if (_network->enabled == true)
+            {
+                broadcast(_gameplay->players, 2, "Skipping...\n");
+            }
+
             _gameplay->current_player = !_gameplay->current_player;
             _gameplay->dice_rolled = false;
         }
