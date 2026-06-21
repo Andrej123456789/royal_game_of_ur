@@ -58,7 +58,7 @@ int net_start_server(uint16_t port, uint16_t number_of_players)
     return s;
 }
 
-void net_accept_clients(socket_t listener_fd, Player* players, int number_of_players)
+void net_accept_clients(int listener_fd, Player* players, int number_of_players)
 {
     for (;;) 
     {
