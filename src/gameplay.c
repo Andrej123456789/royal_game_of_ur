@@ -232,8 +232,8 @@ void gameplay(Gameplay* _gameplay, Network* _network)
 
             if (_gameplay->players[_gameplay->current_player].network.ready)
             {
-                strncpy(user_input, _gameplay->players[_gameplay->current_player].network.inbuf, BUFFER_LIMIT);
-                user_input[BUFFER_LIMIT] = '\0';
+                strncpy(user_input, _gameplay->players[_gameplay->current_player].network.inbuf, 5);
+                user_input[5] = '\0';
             }
 
             else
