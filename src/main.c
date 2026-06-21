@@ -10,6 +10,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include <json-c/json.h>
 
@@ -138,6 +139,10 @@ int main(int argc, char* argv[])
         }
 
         _gameplay->players[i].points = 0;
+
+        _gameplay->players[i].network.sockfd = -1;
+        memset(_gameplay->players[i].network.inbuf, 0, BUFFER_LIMIT);
+        _gameplay->players[i].network.ready = false;
     }
 
     Network* _network = (Network*)malloc(sizeof(Network));
@@ -158,19 +163,8 @@ int main(int argc, char* argv[])
             printf("Continuing with default settings.\n");
         }
     }
-
-    printf("Royal Game of Ur");
-    if (_gameplay->irvin_finkel_ruleset == true)
-    {
-        printf(" | Irving Finkel's ruleset\n");
-    }
-
-    else
-    {
-        printf(" | James Masters's ruleset\n");
-    }
     
-    gameplay(_gameplay);
+    gameplay(_gameplay, _network);
 
     free(_gameplay);
     free(_network);

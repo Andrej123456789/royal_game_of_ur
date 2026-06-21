@@ -9,6 +9,9 @@
 
 #include <stdbool.h>
 #include <stdint.h>
+#include <stddef.h>
+
+#define BUFFER_LIMIT 255
 
 /**
  * Struct containing network informations
@@ -40,6 +43,19 @@ typedef struct Player
 {
     Piece pieces[7];
     int points;
+
+    /**
+     * Struct related to network profile of a player.
+     * @param sockfd socket number, <= 0 is free slot
+     * @param inbuf player's input
+     * @param ready did player send an input
+     */
+    struct
+    {
+        int sockfd;
+        char inbuf[BUFFER_LIMIT];
+        bool ready;
+    } network;
 } Player;
 
 /**
@@ -86,4 +102,4 @@ int roll_dice();
  * Gameplay mechanics
  * @param _gameplay `Gameplay` struct
  */
-void gameplay(Gameplay* _gameplay);
+void gameplay(Gameplay* _gameplay, Network* _network);

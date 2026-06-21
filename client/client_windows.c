@@ -1,6 +1,6 @@
 /**
  * @author Andrej123456789 (Andrej Bartulin)
- * PROJECT: royal_game_of_ur
+ * PROJECT: Royal Game of Ur
  * LICENSE: MIT license
  * DESCRIPTION: Client code (Windows)
  */

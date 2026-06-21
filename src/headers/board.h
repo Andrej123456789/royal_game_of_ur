@@ -8,6 +8,7 @@
 #pragma once
 
 struct Gameplay;
+struct Network;
 
 #define WIDTH 17
 #define WIDTH_PIECE 19
@@ -17,4 +18,4 @@ struct Gameplay;
  * Draws the game board
  * @param _gameplay `Gameplay` struct
  */
-void draw_board(struct Gameplay* _gameplay);
+void draw_board(struct Gameplay* _gameplay, struct Network* _network);

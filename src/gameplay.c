@@ -13,6 +13,7 @@
 
 #include "headers/board.h"
 #include "headers/gameplay.h"
+#include "headers/server.h"
 
 int next_value_zero(int x, bool finkel)
 {
@@ -119,9 +120,62 @@ int roll_dice()
     return sum;
 }
 
-void gameplay(Gameplay* _gameplay)
+void gameplay(Gameplay* _gameplay, Network* _network)
 {
-    draw_board(_gameplay);
+    int listener_fd = -1;
+    if (_network->enabled == true)
+    {
+        listener_fd = net_start_server(_network->port, 2);
+    }
+
+    /* Wait for all clients to join the game */
+    if (_network->enabled == true)
+    {
+        uint16_t connected_clients = 0;
+        while (connected_clients < 2)
+        {
+            connected_clients = 0; // reset counter so it counts all connected clients correctly
+            if (listener_fd >= 0)
+            {
+                net_accept_clients(listener_fd, _gameplay->players, 2);
+                net_poll_clients(_gameplay->players, 2);
+            }
+
+            for (uint16_t i = 0; i < 2; i++)
+            {
+                if (_gameplay->players[i].network.sockfd > 0)
+                {
+                    connected_clients++;
+                }
+            }
+        }
+    }
+
+    printf("Royal Game of Ur");
+    if (_network->enabled == true)
+    {
+        broadcast(_gameplay->players, 2, "Royal Game of Ur");
+    }
+
+    if (_gameplay->irvin_finkel_ruleset == true)
+    {
+        printf(" | Irving Finkel's ruleset\n");
+        if (_network->enabled == true)
+        {
+            broadcast(_gameplay->players, 2, " | Irving Finkel's ruleset\n");
+        }
+    }
+
+    else
+    {
+        printf(" | James Masters's ruleset\n");
+        if (_network->enabled == true)
+        {
+            broadcast(_gameplay->players, 2, " | James Masters's ruleset\n");
+        }
+    }
+
+    draw_board(_gameplay, _network);
 
     srand(time(NULL));
     if (roll_dice() >= roll_dice())
@@ -135,19 +189,74 @@ void gameplay(Gameplay* _gameplay)
     }
 
     printf("Player %d starts first. [0 - left, 1 - right]\n", _gameplay->current_player);
+    if (_network->enabled == true)
+    {
+        broadcast(_gameplay->players, 2, "Player %d starts first. [0 - left, 1 - right]\n", _gameplay->current_player);
+    }
 
     while (true)
     {
-        printf("Player %d [roll, moveX, help, skip, exit]: ", _gameplay->current_player);
+        if (listener_fd >= 0) 
+        {
+            net_accept_clients(listener_fd, _gameplay->players, 2);
+            net_poll_clients(_gameplay->players, 2);
+        }
 
         char user_input[6];
-        scanf("%5s", user_input);
+        if (_network->enabled == true)
+        {
+            send_to_player(&_gameplay->players[_gameplay->current_player], "Player %d [roll, moveX, help, skip, exit]: ", _gameplay->current_player);
+
+            const int TIME_LIMIT_SEC = 30;
+            const int POLL_SLEEP_US = 10000; // 10 ms
+
+            time_t deadline = time(NULL) + TIME_LIMIT_SEC;
+
+            /* poll until we get a full line or the timer expires */
+            while (!_gameplay->players[_gameplay->current_player].network.ready && time(NULL) < deadline)
+            {
+                net_poll_clients(_gameplay->players, 2);   /* non‑blocking socket pump  */
+
+                #if defined _WIN32 || defined _WIN64
+                    Sleep(POLL_SLEEP_US / 100);    /* nap to save CPU */
+                #else
+                    usleep(POLL_SLEEP_US);         /* nap to save CPU */
+                #endif
+            }
+
+            if (_gameplay->players[_gameplay->current_player].network.ready)
+            {
+                strncpy(user_input, _gameplay->players[_gameplay->current_player].network.inbuf, BUFFER_LIMIT);
+                user_input[BUFFER_LIMIT] = '\0';
+            }
+
+            else
+            {
+                strcpy(user_input, "time");
+            }
+
+            /* reset buffer */
+            _gameplay->players[_gameplay->current_player].network.inbuf[0] = '\0';
+            _gameplay->players[_gameplay->current_player].network.ready = false;
+        }
+
+        else
+        {
+            printf("Player %d [roll, moveX, help, skip, exit]: ", _gameplay->current_player);
+            scanf("%5s", user_input);
+        }
 
         if (strcmp(user_input, "roll") == 0)
         {
             if (_gameplay->dice_rolled == true)
             {
                 printf("Dice already rolled! Dice is: %d.\n", _gameplay->dice);
+
+                if (_network->enabled == true)
+                {
+                    send_to_player(&_gameplay->players[_gameplay->current_player], "Dice already rolled! Dice is: %d.\n", _gameplay->dice);
+                }
+
                 continue;
             }
 
@@ -155,10 +264,18 @@ void gameplay(Gameplay* _gameplay)
             _gameplay->dice_rolled = true;
 
             printf("Dice is set at: %d\n", _gameplay->dice);
+            if (_network->enabled == true)
+            {
+                broadcast(_gameplay->players, 2, "Dice is set at: %d\n", _gameplay->dice);
+            }
 
             if (_gameplay->dice == 0 && _gameplay->irvin_finkel_ruleset == true)
             {
                 printf("No moves.\n");
+                if (_network->enabled == true)
+                {
+                    broadcast(_gameplay->players, 2, "No moves.\n");
+                }
 
                 _gameplay->current_player = !_gameplay->current_player;
                 _gameplay->dice_rolled = false;
@@ -167,7 +284,12 @@ void gameplay(Gameplay* _gameplay)
             else if (_gameplay->dice == 0 && _gameplay->irvin_finkel_ruleset == false)
             {
                 _gameplay->dice = 4;
+
                 printf("Dice is set at: 4\n");
+                if (_network->enabled == true)
+                {
+                    broadcast(_gameplay->players, 2, "Dice is set at: 4\n");
+                }
             }
         }
 
@@ -177,12 +299,22 @@ void gameplay(Gameplay* _gameplay)
             if (id < 0 || id > 6)
             {
                 printf("Invalid piece ID '%c'!\n", user_input[4]);
+                if (_network->enabled == true)
+                {
+                    send_to_player(&_gameplay->players[_gameplay->current_player], "Invalid piece ID '%c'!\n", user_input[4]);
+                }
+
                 continue;
             }
 
             if (_gameplay->dice_rolled == false)
             {
                 printf("First roll a dice!\n");
+                if (_network->enabled == true)
+                {
+                    send_to_player(&_gameplay->players[_gameplay->current_player], "First roll a dice!\n");
+                }
+
                 continue;
             }
 
@@ -190,6 +322,11 @@ void gameplay(Gameplay* _gameplay)
             if (p->position == 15 || p->position == 17)
             {
                 printf("Invalid move!\n");
+                if (_network->enabled == true)
+                {
+                    send_to_player(&_gameplay->players[_gameplay->current_player], "Invalid move!\n");
+                }
+
                 continue;
             }
 
@@ -247,8 +384,12 @@ void gameplay(Gameplay* _gameplay)
             if (invalid == true)
             {
                 printf("Invalid move!\n");
-                p->position = old_pos;
+                if (_network->enabled == true)
+                {
+                    send_to_player(&_gameplay->players[_gameplay->current_player], "Invalid move!\n");
+                }
 
+                p->position = old_pos;
                 continue;
             }
 
@@ -259,11 +400,21 @@ void gameplay(Gameplay* _gameplay)
             }
 
             printf("\x1b[2J\x1b[H");
-            draw_board(_gameplay);
+            if (_network->enabled == true)
+            {
+                broadcast(_gameplay->players, 2, "\x1b[2J\x1b[H");
+            }
+
+            draw_board(_gameplay, _network);
 
             if (_gameplay->players[_gameplay->current_player].points == 7)
             {
                 printf("Player %d won!\n", _gameplay->current_player);
+                if (_network->enabled == true)
+                {
+                    broadcast(_gameplay->players, 2, "Player %d won!\n", _gameplay->current_player);
+                }
+
                 break;
             }
 
@@ -286,6 +437,17 @@ void gameplay(Gameplay* _gameplay)
             printf("skip - skip current turn\n");
             printf("exit - stop the game\n");
             printf("GitHub: https://github.com/Andrej123456789/royal_game_of_ur\n");
+
+            if (_network->enabled == true)
+            {
+                broadcast(_gameplay->players, 2, "--- HELP ---\n");
+                broadcast(_gameplay->players, 2, "roll - roll the dice, only possible to roll once per turn\n");
+                broadcast(_gameplay->players, 2, "moveX - move a piece with index 'X'\n");
+                broadcast(_gameplay->players, 2, "help - help with the commands\n");
+                broadcast(_gameplay->players, 2, "skip - skip current turn\n");
+                broadcast(_gameplay->players, 2, "exit - stop the game\n");
+                broadcast(_gameplay->players, 2, "GitHub: https://github.com/Andrej123456789/royal_game_of_ur\n");
+            }
         }
 
         else if (strcmp(user_input, "skip") == 0)
@@ -297,12 +459,21 @@ void gameplay(Gameplay* _gameplay)
         else if (strcmp(user_input, "exit") == 0)
         {
             printf("Exiting...");
+            if (_network->enabled == true)
+            {
+                broadcast(_gameplay->players, 2, "Exiting...");
+            }
+
             break;
         }
 
         else
         {
             printf("Incorrect command!\n");
+            if (_network->enabled == true)
+            {
+                send_to_player(&_gameplay->players[_gameplay->current_player], "Incorrect command!\n");
+            }
         }
     }
 }
