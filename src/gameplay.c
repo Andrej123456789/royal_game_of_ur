@@ -11,6 +11,12 @@
 #include <string.h>
 #include <time.h>
 
+#if defined _WIN32 || defined _WIN64
+    #include <Windows.h>
+#else
+    #include <unistd.h>
+#endif
+
 #include "headers/board.h"
 #include "headers/gameplay.h"
 #include "headers/server.h"
