@@ -3,7 +3,7 @@
                                     // if false game uses James Masters's ruleset
 
     "network": [{
-        "enabled": false, // multiplayer enabled or not
+        "enabled": true, // multiplayer enabled or not
         "port": 5555 // server's port
     }]
 }

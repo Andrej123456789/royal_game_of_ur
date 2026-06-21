@@ -14,13 +14,6 @@ struct Player;
 
 #define BUFFER_LIMIT 255
 
-#ifdef _WIN32
-    #include <winsock2.h>
-    typedef SOCKET socket_t;
-#else
-    typedef int socket_t;
-#endif
-
 /**
  * Starts a server
  * @param port port number
@@ -36,7 +29,7 @@ int net_start_server(uint16_t port, uint16_t number_of_players);
  * @param number_of_players number of players on a server
  * @return void
  */
-void net_accept_clients(socket_t listener_fd, Player* players, int number_of_players);
+void net_accept_clients(int listener_fd, Player* players, int number_of_players);
 
 /**
  * Polls input from clients

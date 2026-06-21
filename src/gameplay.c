@@ -213,7 +213,7 @@ void gameplay(Gameplay* _gameplay, Network* _network)
         {
             send_to_player(&_gameplay->players[_gameplay->current_player], "Player %d [roll, moveX, help, skip, exit]: ", _gameplay->current_player);
 
-            const int TIME_LIMIT_SEC = 30;
+            const int TIME_LIMIT_SEC = 60;
             const int POLL_SLEEP_US = 10000; // 10 ms
 
             time_t deadline = time(NULL) + TIME_LIMIT_SEC;
@@ -458,6 +458,18 @@ void gameplay(Gameplay* _gameplay, Network* _network)
 
         else if (strcmp(user_input, "skip") == 0)
         {
+            _gameplay->current_player = !_gameplay->current_player;
+            _gameplay->dice_rolled = false;
+        }
+
+        else if (strcmp(user_input, "time") == 0)
+        {
+            printf("Player %d timed out! Skipping...\n", _gameplay->current_player);
+            if (_network->enabled == true)
+            {
+                broadcast(_gameplay->players, 2, "Player %d timed out! Skipping...\n", _gameplay->current_player);
+            }
+
             _gameplay->current_player = !_gameplay->current_player;
             _gameplay->dice_rolled = false;
         }

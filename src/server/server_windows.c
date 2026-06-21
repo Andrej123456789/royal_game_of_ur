@@ -62,13 +62,13 @@ int net_start_server(uint16_t port, uint16_t number_of_players)
     return (int)s;
 }
 
-void net_accept_clients(socket_t listener_fd, Player* players, int number_of_players)
+void net_accept_clients(int listener_fd, Player* players, int number_of_players)
 {
     for (;;)
     {
         struct sockaddr_in cli;
         int len = sizeof(cli);
-        SOCKET c = accept(listener_fd, (struct sockaddr*)&cli, &len);
+        SOCKET c = accept((SOCKET)listener_fd, (struct sockaddr*)&cli, &len);
 
         if (c == INVALID_SOCKET)
         {
