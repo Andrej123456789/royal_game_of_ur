@@ -200,7 +200,7 @@ void computer_player(Gameplay* _gameplay, char* user_input)
         int new_pos = make_move(_gameplay, i, &_gameplay->players[_gameplay->current_player].pieces[i]);
         if (new_pos != -1)
         {
-            snprintf(user_input, sizeof(user_input), "move%d", i);
+            snprintf(user_input, 6, "move%d", i);
             return;
         }
     }
