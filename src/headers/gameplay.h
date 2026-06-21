@@ -45,7 +45,7 @@ typedef struct Player
     int points;
 
     /**
-     * Struct related to network profile of a player.
+     * Struct related to the network profile of a player.
      * @param sockfd socket number, <= 0 is free slot
      * @param inbuf player's input
      * @param ready did player send an input
@@ -101,5 +101,7 @@ int roll_dice();
 /**
  * Gameplay mechanics
  * @param _gameplay `Gameplay` struct
+ * @param _network `Network` struct
+ * @return void
  */
 void gameplay(Gameplay* _gameplay, Network* _network);

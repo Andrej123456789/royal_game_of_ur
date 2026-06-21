@@ -17,5 +17,7 @@ struct Network;
 /**
  * Draws the game board
  * @param _gameplay `Gameplay` struct
+ * @param _network `Network` struct
+ * @return void
  */
 void draw_board(struct Gameplay* _gameplay, struct Network* _network);
