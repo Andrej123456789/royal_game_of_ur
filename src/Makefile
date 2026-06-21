@@ -30,4 +30,4 @@ run:
 	@./$(BIN)
 
 clean:
-	rm -rf $(OBJECTS) $(BINFOLDER)
+	rm -rf $(OBJDIR) $(BINFOLDER)

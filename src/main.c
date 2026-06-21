@@ -180,7 +180,6 @@ int main(int argc, char* argv[])
         _gameplay->players[i].type = 0;
 
         _gameplay->players[i].network.sockfd = -1;
-        memset(_gameplay->players[i].network.inbuf, 0, BUFFER_LIMIT);
         _gameplay->players[i].network.ready = false;
     }
 
