@@ -8,8 +8,8 @@
 #pragma once
 
 #include <stdbool.h>
-#include <stdint.h>
 #include <stddef.h>
+#include <stdint.h>
 
 #define BUFFER_LIMIT 255
 
@@ -67,31 +67,31 @@ typedef struct Player
  * @param current_player id of current player (0 or 1)
  * @param dice current dice number
  * @param dice_rolled has dice been rolled
- * @param players array containing all of the players
  * @param irvin_finkel_ruleset is game played by Irvin Finkel's rules or
  * by James Masters's rules
+ * @param players array containing all of the players
  */
 typedef struct Gameplay
 {
     bool current_player;
     int dice;
     bool dice_rolled;
-    Player players[2];
     bool irvin_finkel_ruleset;
+    Player players[2];
 } Gameplay;
 
 /**
- * Move piece of player 0
+ * Move a piece of player 0
  * @param pos current position
- * @param finkel if true Finkel's rules are used, if false Masters's rules are used
+ * @param finkel true if Finkel's rules are used, false if Masters's rules are used
  * @return int
  */
 int next_value_zero(int pos, bool finkel);
 
 /**
- * Move piece of player 1
+ * Move a piece of player 1
  * @param pos current position
- * @param finkel if true Finkel's rules are used, if false Masters's rules are used
+ * @param finkel true if Finkel's rules are used, false if Masters's rules are used
  * @return int
  */
 int next_value_one(int pos, bool finkel);
@@ -103,10 +103,11 @@ int next_value_one(int pos, bool finkel);
 int roll_dice();
 
 /**
- * Check if moving selected piece is possible
+ * Check if moving a selected piece is possible
  * @param _gameplay `Gameplay` struct
  * @param id id of current piece
  * @param p `Piece` struct
+ * @return int
  */
 int make_move(Gameplay* _gameplay, int id, Piece* p);
 
@@ -114,6 +115,7 @@ int make_move(Gameplay* _gameplay, int id, Piece* p);
  * Computer's play
  * @param _gameplay `Gameplay` struct
  * @param user_input array where computer will save its selection
+ * @return void
  */
 void computer_player(Gameplay* _gameplay, char* user_input);
 

@@ -14,11 +14,9 @@ This is a multiplayer terminal-based implementation written in C programming lan
 - 24-square shared board with branching path
 - 4 tetrahedral dice (0–4 per roll)
 - pieces enter from start and follow fixed route to exit
-- movement can be split across multiple pieces or stacked on one
 - landing on opponent piece on normal square sends it back to start
 - rosette squares are safe (cannot be captured) and grant an extra roll
-- must roll exact number to bear off pieces
-- pieces must fully traverse and exit to score
+- pieces must fully traverse the board and exit via an exact roll
 - first to bear off all 7 pieces wins
 
 ### James Masters ruleset
@@ -26,8 +24,9 @@ This is a multiplayer terminal-based implementation written in C programming lan
 - 2 players, 7 pieces each
 - 24-square shared board with branching path
 - 3 tetrahedral dice (0–4 per roll), rolling a total of 0 allows a special move of exactly 4 squares
-- rosette squares are evenly spaced (every 4th square) and not safe (can be captured), but still grant an extra roll
+- pieces enter from start and follow fixed route to exit
 - landing on an opponent's piece anywhere (including rosettes) sends it back to the start
+- rosette squares are evenly spaced (every 4th square) and not safe (can be captured), but still grant an extra roll
 - pieces must fully traverse the board and exit via an exact roll
 - first to bear off all 7 pieces wins
 
