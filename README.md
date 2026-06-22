@@ -1,10 +1,10 @@
 # Royal Game of Ur
 
 [Royal Game of Ur](https://en.wikipedia.org/wiki/Royal_Game_of_Ur) is a two-player board game that originated in ancient Mesopotamia.
-
 Players race pieces along a path using dice rolls to reach the end first.
 
-This is a multiplayer terminal-based implementation written in C programming language.
+This is a terminal-based implementation written in C programming language. ANSI-compatible terminal required.
+Supports local, computer and network play.
 
 ## Rules
 
@@ -75,3 +75,21 @@ This is a multiplayer terminal-based implementation written in C programming lan
 | 4       | Run the program              | `make run`                                                         |
 | 5       | Enter the `client` directory | `cd ../client`                                                     |
 | 6       | Compile and run the client   | `gcc client_posix.c -o client_posix && ./client_posix <ip> <port>` |
+
+## settings.json
+```json
+{
+    "irvin_finkel_ruleset": true,   // if true game uses Irvin Finkel's ruleset,
+                                    // if false game uses James Masters's ruleset
+
+    "players": [{  // 0 - local player, 1 - computer player, 2 - network player
+        "player0": 0,
+        "player1": 0
+    }],
+
+    "network": [{
+        "enabled": false, // multiplayer enabled or not
+        "port": 5555 // server's port
+    }]
+}
+```
