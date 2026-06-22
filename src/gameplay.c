@@ -445,13 +445,10 @@ void gameplay(Gameplay* _gameplay, Network* _network)
 
             draw_board(_gameplay, _network);
 
-            if (_gameplay->players[_gameplay->current_player].type != 0)
+            printf("Player %d moved piece %d to position %d.\n", _gameplay->current_player, id, new_pos);
+            if (_network->enabled == true)
             {
-                printf("Player %d moved piece %d to position %d.\n", _gameplay->current_player, id, new_pos);
-                if (_network->enabled == true)
-                {
-                    broadcast(_gameplay->players, 2, "Player %d moved piece %d to position %d.\n", _gameplay->current_player, id, new_pos);
-                }
+                broadcast(_gameplay->players, 2, "Player %d moved piece %d to position %d.\n", _gameplay->current_player, id, new_pos);
             }
 
             if (_gameplay->players[_gameplay->current_player].points == 7)
