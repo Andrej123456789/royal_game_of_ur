@@ -206,7 +206,10 @@ int main(int argc, char* argv[])
     if ((_gameplay->players[0].type == 2 || _gameplay->players[1].type == 2) && _network->enabled == false)
     {
         printf("Network is not enabled! ");
-        printf("Network players are disabled.\n");
+        printf("Network players are disabled and converted to local players.\n");
+
+        _gameplay->players[0].type = (_gameplay->players[0].type == 2) ? 0 : _gameplay->players[0].type;
+        _gameplay->players[1].type = (_gameplay->players[1].type == 2) ? 0 : _gameplay->players[1].type;
     }
 
     if (_network->enabled == true)
