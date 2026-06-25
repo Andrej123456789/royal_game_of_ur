@@ -6,6 +6,8 @@ Players race pieces along a path using dice rolls to reach the end first.
 This is a terminal-based implementation written in C programming language. ANSI-compatible terminal required.
 Supports local, computer and network play.
 
+[Latest release - v2.0.0](https://github.com/Andrej123456789/royal_game_of_ur/releases/tag/v2.0.0)
+
 ## Rules
 
 ### Irving Finkel ruleset
