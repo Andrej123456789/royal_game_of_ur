@@ -54,16 +54,18 @@ Supports local, computer and network play.
 
 ### Windows
 
-| Number: | Step:                                                             | Command:                                                        |
-| ------- | ----------------------------------------------------------------- | --------------------------------------------------------------- |
-| 1       | Clone a repository                                                | `git clone https://github.com/Andrej123456789/royal_game_of_ur` |
-| 2       | Enter the `src` directory                                         | `cd royal_game_of_ur/src`                                       |
-| 3       | Create `build` directory and enter it                             | `mkdir build`                                                   |
-| 4       | Run CMake                                                         | `cmake .. -DVCPKG_ROOT="path_to_vcpkg`                          |
-| 5       | Enter `Developer Command Prompt` and enter the `client` directory | `cd path_to_client_directory`                                   |
-| 6       | Compile and run the client                                        | `cl client_windows.c && ./client_windows <ip> <port>`           |
+| Number: | Step:                                                             | Command:                                                           |
+| ------- | ----------------------------------------------------------------- | ------------------------------------------------------------------ |
+| 1       | Clone a repository                                                | `git clone https://github.com/Andrej123456789/royal_game_of_ur`    |
+| 2       | Enter the `src` directory                                         | `cd royal_game_of_ur\src`                                          |
+| 3       | Create the `build` directory and enter it                         | `mkdir build && cd build`                                          |
+| 4       | Run CMake                                                         | `cmake .. -DVCPKG_ROOT="path_to_vcpkg"`                            |
+| 5       | Open Visual Studio and build the solution                         |                                                                    |
+| 6       | Run the program located inside the `Debug` or `Release` folder    | `.\Debug\royal_game_of_ur.exe` or `.\Release\royal_game_of_ur.exe` |
+| 7       | Enter `Developer Command Prompt` and enter the `client` directory | `cd path_to_client_directory`                                      |
+| 8       | Compile and run the client                                        | `cl client_windows.c && .\client_windows <ip> <port>`              |
 
-**Notice! In order not to use Visual Studio (you still need to have it installed), you can use nmake. Run CMake with following command: `cmake -G "NMake Makefiles" -DCMAKE_C_COMPILER=compiler-cl -DCMAKE_CXX_COMPILER=compiler-cl -DVCPKG_ROOT="path_to_vcpkg" ..`. To compile the project use command `nmake`.**
+**Notice! In order not to use Visual Studio (you still need to have it installed), you can use nmake. Run CMake with following command: `cmake -G "NMake Makefiles" -DCMAKE_C_COMPILER=cl -DCMAKE_CXX_COMPILER=cl -DVCPKG_ROOT="path_to_vcpkg" ..`. To compile the project use command `nmake`. You need to be inside _Developer Command Prompt_ or _Developer Powershell_.**
 
 ### Linux
 
@@ -77,19 +79,25 @@ Supports local, computer and network play.
 | 6       | Compile and run the client   | `gcc client_posix.c -o client_posix && ./client_posix <ip> <port>` |
 
 ## settings.json
+
 ```json
 {
-    "irvin_finkel_ruleset": true,   // if true game uses Irvin Finkel's ruleset,
-                                    // if false game uses James Masters's ruleset
+  "irvin_finkel_ruleset": true, // if true game uses Irvin Finkel's ruleset,
+  // if false game uses James Masters's ruleset
 
-    "players": [{  // 0 - local player, 1 - computer player, 2 - network player
-        "player0": 0,
-        "player1": 0
-    }],
+  "players": [
+    {
+      // 0 - local player, 1 - computer player, 2 - network player
+      "player0": 0,
+      "player1": 0
+    }
+  ],
 
-    "network": [{
-        "enabled": false, // multiplayer enabled or not
-        "port": 5555 // server's port
-    }]
+  "network": [
+    {
+      "enabled": false, // multiplayer enabled or not
+      "port": 5555 // server's port
+    }
+  ]
 }
 ```

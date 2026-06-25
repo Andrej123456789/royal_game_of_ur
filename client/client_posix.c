@@ -19,7 +19,7 @@
 #define BUF 255
 
 /**
- * Enables non-blocking mode on a file descriptor.
+ * Enable non-blocking mode on a file descriptor.
  * @param fd File descriptor to set.
  * @return int
  */
